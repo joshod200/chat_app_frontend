@@ -1,5 +1,5 @@
-# Chat App Web
-Web front-end for my chat platform application
+# Chat App Web - Ongoing
+Web front-end for a chat platform application
 
 ## Screenshot
 ![screenshot](./public/screenshot.png)
@@ -7,3 +7,6 @@ Web front-end for my chat platform application
 ## Built With
 * React.js
 * Actioncable
+* Material-UI
+* Custom React Library
+* React router
