@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Home = () => {
+
   const styles = useStyles();
 
   const {

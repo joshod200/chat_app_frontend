@@ -2,13 +2,11 @@ import React from "react";
 import {MessagesFormContext} from "../../contexts/messages";
 import {ShowChatroomContext} from "../../contexts/chatrooms";
 import useMessagesHook from "../../hooks/messages";
-import { useRoute } from '@react-navigation/native';
+import { useParams } from 'react-router-dom';
 
 const MessagesFormHOC = (Component) => {
   const MessagesFormComponent = (props) => {
-
-    const route = useRoute();
-
+    const params = useParams();
     const [message, setMessage] = React.useState();
 
     const {
@@ -19,16 +17,20 @@ const MessagesFormHOC = (Component) => {
       createMessage
     } = useMessagesHook();
 
+    const handleSetMessage = ({ target }) => {
+      setMessage(target.value);
+    }
+
     const handleCreateMessage = () => {
       if(!message) return;
-      createMessage(message, route.params.id);
+      createMessage(message, params.id);
       setMessage("");
     }
 
     const messageFormContext = {
       message,
-      setMessage,
-      handleCreateMessage
+      handleCreateMessage,
+      handleSetMessage
     };
 
     return(

@@ -4,6 +4,9 @@ import {HomeContext} from "../contexts/home";
 import _AuthHOC from "./_auth";
 import ActionCable from 'actioncable';
 import {host} from "../config";
+import {
+  getCookie
+} from '../lib/redirect';
 
 const HomeHOC = (Component) => {
 
@@ -41,25 +44,22 @@ const HomeHOC = (Component) => {
     React.useEffect(() => {
       if(cable) return;
       console.log("fetching headers : authhoc");
-      /*AsyncStorage.getItem('headers')
-      .then((headers) => {
-        console.log("headers found : authhoc. validate");
-        const {
-          accessToken,
-          client,
-          uid
-        } = JSON.parse(headers);
-        const c = ActionCable.createConsumer(`${host}/cable?access-token=${accessToken}&client=${client}&uid=${uid}`);
-        const ch = c.subscriptions.create("HomeChannel", {
-          connected: () => console.log("connected"),
-          received: (message) => {
+      const headers = getCookie("headers");
+      const {
+        accessToken,
+        client,
+        uid
+      } = JSON.parse(headers);
+      const c = ActionCable.createConsumer(`${host}/cable?access-token=${accessToken}&client=${client}&uid=${uid}`);
+      const ch = c.subscriptions.create("HomeChannel", {
+        connected: () => console.log("connected"),
+        received: (message) => {
 
-          }
-        });
-        setCable(c);
-        setChannel(ch);
-      })
-      */
+        }
+      });
+      setCable(c);
+      setChannel(ch);
+      return () => c.disconnect();
     }, []);
 
     React.useEffect(() => {
@@ -79,7 +79,7 @@ const HomeHOC = (Component) => {
 
   }
 
-  return _AuthHOC(HomeHOCCompnent);//_AuthHOC(HomeHOCCompnent);
+  return _AuthHOC(HomeHOCCompnent);
 
 }
 

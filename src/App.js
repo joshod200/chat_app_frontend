@@ -3,7 +3,7 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import SignIn from "./app/views/sign_in";
 import Home from "./app/views/home";
 //import NewChatroom from "./app/views/chatrooms/new";
-//import ShowChatroom from "./app/views/chatrooms/show";
+import ShowChatroom from "./app/views/chatrooms/show";
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
@@ -19,7 +19,7 @@ const stacks = [
   stackBuilder(SignIn, ["/sign_in"]),
   stackBuilder(Home, ["/"]),
 //  stackBuilder(ShowChatroom, ["/chatrooms/new"]),
-//  stackBuilder(ShowChatroom, ["/chatrooms/:id"])
+  stackBuilder(ShowChatroom, ["/chatrooms/:id"])
 ];
 
 const App = () => {

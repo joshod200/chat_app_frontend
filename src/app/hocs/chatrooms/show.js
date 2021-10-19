@@ -3,14 +3,15 @@ import useMessagesHook from "../../hooks/messages";
 import {ShowChatroomContext} from "../../contexts/chatrooms";
 import _AuthHOC from "../_auth";
 import {AuthContext} from "../../contexts/auth";
-import ActionCable from 'react-native-actioncable';
-import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
+import ActionCable from 'actioncable';
 import {host} from "../../config";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  getCookie
+} from '../../lib/redirect';
 
 const ShowChatroomHOC = (Component) => {
 
-  const ShowChatroomHOCCompnent = ({ route }) => {
+  const ShowChatroomHOCCompnent = ({ match, location }) => {
     const [messages, setMessages] = React.useState([]);
     const [cable, setCable] = React.useState();
     const [channel, setChannel] = React.useState();
@@ -39,32 +40,30 @@ const ShowChatroomHOC = (Component) => {
       messagesRef.current = messages
     }, [messages])
 
-    const { id, user } = route.params;
+    const { id } = match.params;
+
+    const { user } = location.state;
 
     React.useEffect(() => {
       if(cable) return;
-      console.log("fetching headers : authhoc");
-      AsyncStorage.getItem('headers')
-      .then((headers) => {
-        console.log("headers found : authhoc. validate");
-        const {
-          accessToken,
-          client,
-          uid
-        } = JSON.parse(headers);
-        const c = ActionCable.createConsumer(`${host}/cable?access-token=${accessToken}&client=${client}&uid=${uid}`);
-        const ch = c.subscriptions.create({channel: "ChatRoomChannel", chat_room_id: id}, {
-          connected: () => console.log("connected"),
-          received: (message) => {
-            message = JSON.parse(message);
-            messagesRef.current.push(message);
-            setMessages(messagesRef.current);
-          }
-        });
-        setCable(c);
-        setChannel(ch);
-      })
-      return () => c.disconnet();
+      const headers = getCookie("headers");
+      const {
+        accessToken,
+        client,
+        uid
+      } = JSON.parse(headers);
+      const c = ActionCable.createConsumer(`${host}/cable?access-token=${accessToken}&client=${client}&uid=${uid}`);
+      const ch = c.subscriptions.create({channel: "ChatRoomChannel", chat_room_id: id}, {
+        connected: () => console.log("connected"),
+        received: (message) => {
+          message = JSON.parse(message);
+          messagesRef.current.push(message);
+          setMessages(messagesRef.current);
+        }
+      });
+      setCable(c);
+      setChannel(ch);
+      return () => c.disconnect();
     }, []);
 
     React.useEffect(() => {

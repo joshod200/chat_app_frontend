@@ -11,7 +11,14 @@ const ChatroomHOC = (Component) => {
         chatroom
       } = props;
 
-      const handleClickChatroom = (id, user) => history.push(`/chatrooms/${chatroom.id}`, {user: chatroom.user});
+      const handleClickChatroom = (id, user) => history.push(
+        {
+          pathname: `/chatrooms/${chatroom.id}`,
+          state: {
+            user: chatroom.user
+          }
+        }
+      );
 
       const chatroomContext = {
         chatroom,
